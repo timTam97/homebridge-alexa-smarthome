@@ -172,6 +172,17 @@ const determineSupportedHomeKitAccessories = (
         ),
       ),
     )
+    .with(['AIR_PURIFIER', Pattern._], () =>
+      E.of(
+        airQuality.toSupportedHomeKitAccessories(
+          platform,
+          entityId,
+          device.displayName,
+          platform.deviceStore.getCacheStatesForDevice(entityId),
+          rangeFeatures,
+        ),
+      ),
+    )
     .when(
       ([_, ops]) =>
         supportsRequiredActions(SwitchAccessory.requiredOperations, ops),
