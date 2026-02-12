@@ -157,7 +157,10 @@ export default abstract class BaseAccessory {
     return this.service.getCharacteristic(characteristic)?.value ?? null;
   }
 
-  removeCharacteristic(char: Parameters<Service['testCharacteristic']>[0] & Parameters<Service['getCharacteristic']>[0]) {
+  removeCharacteristic(
+    char: Parameters<Service['testCharacteristic']>[0] &
+      Parameters<Service['getCharacteristic']>[0],
+  ) {
     if (this.service.testCharacteristic(char)) {
       this.service.removeCharacteristic(this.service.getCharacteristic(char)!);
     }
