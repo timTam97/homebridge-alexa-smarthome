@@ -10,8 +10,10 @@
         "description": "List of smart home device names to add as HomeKit accessories. If no devices are specified, the plugin will attempt to add all supported accessories.",
         "type": "array",
         "uniqueItems": true,
-        "required": true,
         "default": [],
+        "condition": {
+          "functionBody": "return model.excludeDevices === undefined;"
+        },
         "items": {
           "title": "Device name",
           "type": "string"
@@ -22,8 +24,10 @@
         "description": "List of smart home device names to exclude from being added as HomeKit accessories. Exclude devices will only be excluded if 'Include device names' is empty.",
         "type": "array",
         "uniqueItems": true,
-        "required": true,
         "default": [],
+        "condition": {
+          "functionBody": "return model.devices === undefined;"
+        },
         "items": {
           "title": "Device name",
           "type": "string"
@@ -109,6 +113,26 @@
             "minimum": 30,
             "maximum": 3600,
             "default": 60
+          }
+        }
+      },
+      "disabledOperations": {
+        "title": "Disable Features",
+        "description": "Turn off specific device capabilities",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "deviceName": {
+              "title": "Device name",
+              "type": "string"
+            },
+            "operations": {
+              "title": "Disabled operations",
+              "type": "string",
+              "placeholder": "Comma separated list, e.g., setBrightness, setColor, setColorTemperature",
+              "pattern": "^(\\w+)(,\\s*\\w+)*$"
+            }
           }
         }
       },

@@ -289,6 +289,20 @@ export class AlexaSmartHomePlatform implements DynamicPlatformPlugin {
   initAccessories(
     device: SmartHomeDevice,
   ): IOEither<AlexaDeviceError, BaseAccessory[]> {
+    const disabledOperationsMap = pipe(
+      O.fromNullable(this.config.disabledOperations),
+      O.getOrElse(
+        constant([] as { deviceName: string; operations?: string | null }[]),
+      ),
+      A.map(
+        ({ deviceName: deviceName, operations }) =>
+          [deviceName.trim(), operations] as const,
+      ),
+      A.reduce(new Map<string, string[]>(), (map, [name, ops]) => {
+        map.set(name, ops?.split(',').map((o) => o.trim()) ?? []);
+        return map;
+      }),
+    );
     return pipe(
       E.bindTo('entityId')(util.extractEntityId(device.id)),
       E.bind('hbAccessories', ({ entityId }) =>
@@ -325,6 +339,11 @@ export class AlexaSmartHomePlatform implements DynamicPlatformPlugin {
                 hbAcc.altDeviceName,
                 constant(device.displayName),
               ),
+              supportedOperations: device.supportedOperations.filter((op) => {
+                const disabled =
+                  disabledOperationsMap.get(device.displayName.trim()) ?? [];
+                return !disabled.includes(op);
+              }),
             };
             return pipe(
               O.bindTo('platAcc')(hbAcc.maybeCachedAcc),

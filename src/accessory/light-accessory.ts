@@ -33,6 +33,8 @@ export default class LightAccessory extends BaseAccessory {
         .getCharacteristic(this.Characteristic.Brightness)
         .onGet(this.handleBrightnessGet.bind(this))
         .onSet(this.handleBrightnessSet.bind(this));
+    } else {
+      this.removeCharacteristic(this.Characteristic.Brightness);
     }
 
     if (this.device.supportedOperations.includes('setColor')) {
@@ -44,6 +46,9 @@ export default class LightAccessory extends BaseAccessory {
         .getCharacteristic(this.Characteristic.Saturation)
         .onGet(this.handleSaturationGet.bind(this))
         .onSet(constVoid);
+    } else {
+      this.removeCharacteristic(this.Characteristic.Hue);
+      this.removeCharacteristic(this.Characteristic.Saturation);
     }
 
     if (this.device.supportedOperations.includes('setColorTemperature')) {
@@ -51,6 +56,8 @@ export default class LightAccessory extends BaseAccessory {
         .getCharacteristic(this.Characteristic.ColorTemperature)
         .onGet(this.handleColorTemperatureGet.bind(this))
         .onSet(this.handleColorTemperatureSet.bind(this));
+    } else {
+      this.removeCharacteristic(this.Characteristic.ColorTemperature);
     }
   }
 
