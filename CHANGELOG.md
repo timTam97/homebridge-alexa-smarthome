@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-02-26
+
+### Added
+
+- The plugin configuration now supports a `disabledOperations` setting to disable operations for a specific device. For devices that create multiple HomeKit accessories (such as air quality monitors creating separate temperature and humidity sensors), users must use the parent Alexa device name in the disabledOperations configuration, not the individual sensor names. For example, if "My Sensor" creates "My Sensor temperature" and "My Sensor humidity", the user should configure `"deviceName": "My Sensor"` (not "My Sensor temperature"). Full config example:
+
+    ```json
+    {
+        "disabledOperations": [
+            {
+                "deviceName": "My Light",
+                "operations": "setBrightness, setColor, setColorTemperature"
+            }
+        ]
+    }
+    ```
+
 ## [2.4.0] - 2025-11-23
 
 ### Changed
@@ -258,7 +275,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for outlets i.e. smart plugs.
 
-[unreleased]: https://github.com/joeyhage/homebridge-alexa-smarthome/compare/v2.4.0...HEAD
+[unreleased]: https://github.com/joeyhage/homebridge-alexa-smarthome/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/joeyhage/homebridge-alexa-smarthome/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/joeyhage/homebridge-alexa-smarthome/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/joeyhage/homebridge-alexa-smarthome/compare/v2.2.1...v2.3.0
 [2.2.1]: https://github.com/joeyhage/homebridge-alexa-smarthome/compare/v2.2.0...v2.2.1
