@@ -56,14 +56,24 @@ export default class AirPurifierAccessory extends BaseAccessory {
       ),
     );
     if (O.isSome(modeAsset)) {
+      const sorted = {
+        ...modeAsset.value,
+        supportedModes: mapper.sortModesByFanSpeed(
+          modeAsset.value.supportedModes,
+        ),
+      };
+      const modeCount = sorted.supportedModes.length;
+      const step = modeCount > 1 ? Math.round(100 / (modeCount - 1)) : 100;
       this.logWithContext(
         'debug',
-        `Using mode controller for fan speed: ${modeAsset.value.modeName}`,
+        `Using mode controller for fan speed: ${sorted.modeName} ` +
+          `(${modeCount} modes, step=${step}%, order: ${sorted.supportedModes.map((m) => m.friendlyName).join(' → ')})`,
       );
       this.service
         .getCharacteristic(this.Characteristic.RotationSpeed)
-        .onGet(this.handleModeRotationSpeedGet.bind(this, modeAsset.value))
-        .onSet(this.handleModeRotationSpeedSet.bind(this, modeAsset.value));
+        .setProps({ minValue: 0, maxValue: 100, minStep: step })
+        .onGet(this.handleModeRotationSpeedGet.bind(this, sorted))
+        .onSet(this.handleModeRotationSpeedSet.bind(this, sorted));
       return;
     }
 

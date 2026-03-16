@@ -28,6 +28,22 @@ export const mapAlexaPowerToCurrentState = (
     .with('ON', constant(characteristic.CurrentAirPurifierState.PURIFYING_AIR))
     .otherwise(constant(characteristic.CurrentAirPurifierState.INACTIVE));
 
+export const sortModesByFanSpeed = (
+  modes: ModeFeature['supportedModes'],
+): ModeFeature['supportedModes'] => {
+  const priority = (m: ModeFeature['supportedModes'][number]): number => {
+    const name = m.friendlyName.toLowerCase();
+    if (name.includes('auto')) return 0;
+    if (name.includes('silent') || name.includes('sleep')) return 1;
+    if (name.includes('turbo') || name.includes('max')) return 100;
+    // Extract number from name for speed levels (e.g., "manual speed 1" → 1)
+    const num = name.match(/\d+/);
+    if (num) return 10 + parseInt(num[0], 10);
+    return 50;
+  };
+  return [...modes].sort((a, b) => priority(a) - priority(b));
+};
+
 export const mapAlexaModeToRotationSpeed = (
   currentMode: string,
   supportedModes: ModeFeature['supportedModes'],
