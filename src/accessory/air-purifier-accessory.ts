@@ -263,8 +263,8 @@ export default class AirPurifierAccessory extends BaseAccessory {
       this.platform.alexaApi.setDeviceStateGraphQl(
         this.device.endpointId,
         'mode',
-        'setModeValue',
-        { modeValue },
+        'setMode',
+        { mode: modeValue },
         asset.instance,
       ),
       TE.match(

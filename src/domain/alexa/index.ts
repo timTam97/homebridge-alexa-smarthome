@@ -74,7 +74,7 @@ export const SupportedActions = {
   adjustTargetSetpoint: 'adjustTargetSetpoint',
   setThermostatMode: 'setThermostatMode',
   setRangeValue: 'setRangeValue',
-  setModeValue: 'setModeValue',
+  setMode: 'setMode',
 } as const;
 
 export type SupportedActionsType = keyof typeof SupportedActions;
