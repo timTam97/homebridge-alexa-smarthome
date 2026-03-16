@@ -3,6 +3,7 @@ import { Either } from 'fp-ts/Either';
 import * as O from 'fp-ts/Option';
 import { pipe } from 'fp-ts/lib/function';
 import { Pattern, match } from 'ts-pattern';
+import AirPurifierAccessory from '../accessory/air-purifier-accessory';
 import FanAccessory from '../accessory/fan-accessory';
 import LightAccessory from '../accessory/light-accessory';
 import LockAccessory from '../accessory/lock-accessory';
@@ -149,6 +150,26 @@ const determineSupportedHomeKitAccessories = (
             deviceType: platform.Service.Thermostat.UUID,
             uuid: generateUuid(platform, entityId, device.deviceType),
           },
+        ]),
+    )
+    .when(
+      ([type, ops]) =>
+        type === 'AIR_PURIFIER' &&
+        supportsRequiredActions(AirPurifierAccessory.requiredOperations, ops),
+      () =>
+        E.of([
+          {
+            altDeviceName: O.none,
+            deviceType: platform.Service.AirPurifier.UUID,
+            uuid: generateUuid(platform, entityId, device.deviceType),
+          },
+          ...airQuality.toSupportedHomeKitAccessories(
+            platform,
+            entityId,
+            device.displayName,
+            platform.deviceStore.getCacheStatesForDevice(entityId),
+            rangeFeatures,
+          ),
         ]),
     )
     .with(['ALEXA_VOICE_ENABLED', Pattern._], () =>

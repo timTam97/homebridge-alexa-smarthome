@@ -9,6 +9,7 @@ import {
 } from '../domain/alexa/errors';
 import { SmartHomeDevice } from '../domain/alexa/get-devices';
 import { AlexaSmartHomePlatform } from '../platform';
+import AirPurifierAccessory from './air-purifier-accessory';
 import AirQualityAccessory from './air-quality-accessory';
 import BaseAccessory from './base-accessory';
 import CarbonMonoxideAccessory from './co-accessory';
@@ -35,6 +36,9 @@ export default class AccessoryFactory {
         )
         .with(platform.Service.Switch.UUID, () =>
           E.of(new SwitchAccessory(platform, device, platAcc)),
+        )
+        .with(platform.Service.AirPurifier.UUID, () =>
+          E.of(new AirPurifierAccessory(platform, device, platAcc)),
         )
         .with(platform.Service.Fanv2.UUID, () =>
           E.of(new FanAccessory(platform, device, platAcc)),

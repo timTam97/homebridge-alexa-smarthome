@@ -5,4 +5,7 @@ module.exports = {
   setupFiles: ['dotenv/config'],
   setupFilesAfterEnv: ['<rootDir>/__tests__/test-setup.ts'],
   testMatch: ['**/?(*.)+(spec|test|it).ts?(x)'],
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
 };

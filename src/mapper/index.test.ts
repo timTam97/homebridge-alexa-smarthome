@@ -88,6 +88,39 @@ describe('mapAlexaDeviceToHomeKitAccessoryInfos', () => {
     );
   });
 
+  test('should map air purifier to AirPurifier accessory', async () => {
+    // given
+    const device = {
+      id: '123',
+      displayName: 'test air purifier',
+      description: 'test',
+      supportedOperations: ['turnOn', 'turnOff'],
+      providerData: {
+        enabled: true,
+        categoryType: 'APPLIANCE',
+        deviceType: 'AIR_PURIFIER',
+      },
+    };
+    const platform = global.createPlatform();
+
+    // when
+    const acc = mapper.mapAlexaDeviceToHomeKitAccessoryInfos(
+      platform,
+      randomUUID(),
+      device,
+    );
+
+    // then
+    expect(E.isRight(acc)).toBe(true);
+    if (E.isRight(acc)) {
+      expect(acc.right[0]).toStrictEqual({
+        altDeviceName: O.none,
+        deviceType: platform.Service.AirPurifier.UUID,
+        uuid: global.TEST_UUID,
+      });
+    }
+  });
+
   test('should map switch without brightness capability to switch accessory', async () => {
     // given
     const device = {

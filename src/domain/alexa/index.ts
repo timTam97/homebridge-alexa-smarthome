@@ -13,6 +13,7 @@ export const SupportedDeviceTypes = [
   'VACUUM_CLEANER',
   'GAME_CONSOLE',
   'AIR_FRESHENER',
+  'AIR_PURIFIER',
 ];
 
 export type AmazonDomain =
@@ -72,6 +73,7 @@ export const SupportedActions = {
   setTargetSetpoint: 'setTargetSetpoint',
   adjustTargetSetpoint: 'adjustTargetSetpoint',
   setThermostatMode: 'setThermostatMode',
+  setRangeValue: 'setRangeValue',
 } as const;
 
 export type SupportedActionsType = keyof typeof SupportedActions;

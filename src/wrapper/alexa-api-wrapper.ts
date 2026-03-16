@@ -37,6 +37,7 @@ import SetDeviceStateResponse, {
 import DeviceStore from '../store/device-store';
 import { PluginLogger } from '../util/plugin-logger';
 import {
+  AirPurifierQuery,
   AirQualityQuery,
   EndpointsQuery,
   LightQuery,
@@ -128,6 +129,7 @@ export class AlexaApiWrapper {
     useCache: boolean,
   ): TaskEither<AlexaApiError, [boolean, CapabilityState[]]> {
     const {
+      AirPurifier,
       AirQualitySensor,
       CarbonMonoxideSensor,
       HumiditySensor,
@@ -148,6 +150,7 @@ export class AlexaApiWrapper {
             pipe(
               TE.of(
                 match(service.UUID)
+                  .with(AirPurifier.UUID, constant(AirPurifierQuery))
                   .with(AirQualitySensor.UUID, constant(AirQualityQuery))
                   .with(Lightbulb.UUID, constant(LightQuery))
                   .with(LockMechanism.UUID, constant(LockQuery))
@@ -221,12 +224,14 @@ export class AlexaApiWrapper {
     featureName: SupportedFeatures,
     featureOperationName: SupportedActionsType,
     payload: Record<string, unknown> = {},
+    instance?: string,
   ): TaskEither<AlexaApiError, void> {
     const request = {
       endpointId,
       featureOperationName,
       featureName,
       ...(Object.keys(payload).length > 0 ? { payload } : {}),
+      ...(instance ? { instance } : {}),
     };
     return pipe(
       TE.tryCatch(

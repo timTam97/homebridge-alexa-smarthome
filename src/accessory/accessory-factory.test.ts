@@ -67,6 +67,38 @@ describe('createAccessory', () => {
     expect(E.isRight(plugAcc)).toBe(true);
   });
 
+  test('should create an AirPurifierAccessory', () => {
+    // given
+    const device = {
+      id: '123',
+      displayName: 'test air purifier',
+      description: 'test',
+      supportedOperations: ['turnOff', 'turnOn'],
+      providerData: {
+        enabled: true,
+        categoryType: 'APPLIANCE',
+        deviceType: 'AIR_PURIFIER',
+      },
+    };
+    const platform = global.createPlatform();
+    const uuid = platform.HAP.uuid.generate(device.id);
+    const platAcc = new platform.api.platformAccessory(
+      device.displayName,
+      uuid,
+    );
+
+    // when
+    const acc = AccessoryFactory.createAccessory(
+      platform,
+      platAcc,
+      device,
+      platform.Service.AirPurifier.UUID,
+    );
+
+    // then
+    expect(E.isRight(acc)).toBe(true);
+  });
+
   test('should not create an unsupported device', async () => {
     // given
     const device = {
