@@ -147,6 +147,29 @@ export const extractStates = (
         )
         .with(
           {
+            name: 'mode',
+            instance: Pattern.string,
+            properties: Pattern.array({
+              modeValue: Pattern.string,
+            }),
+            configuration: {
+              friendlyName: {
+                value: {
+                  text: Pattern.string,
+                },
+              },
+            },
+          },
+          (_) =>
+            O.of({
+              ...withCommonProps(_),
+              value: _.properties[0].modeValue,
+              instance: _.instance,
+              modeName: _.configuration.friendlyName.value.text,
+            } as CapabilityState),
+        )
+        .with(
+          {
             name: 'thermostat',
             properties: Pattern.array(Pattern.any),
           },

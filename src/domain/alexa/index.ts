@@ -74,6 +74,7 @@ export const SupportedActions = {
   adjustTargetSetpoint: 'adjustTargetSetpoint',
   setThermostatMode: 'setThermostatMode',
   setRangeValue: 'setRangeValue',
+  setModeValue: 'setModeValue',
 } as const;
 
 export type SupportedActionsType = keyof typeof SupportedActions;
@@ -88,6 +89,7 @@ export const SupportedFeatures = {
   temperatureSensor: 'temperatureSensor',
   thermostat: 'thermostat',
   toggle: 'toggle',
+  mode: 'mode',
 } as const;
 
 export type SupportedFeatures = keyof typeof SupportedFeatures;
@@ -98,4 +100,5 @@ export interface CapabilityState {
   instance?: Nullable<string>;
   name?: Nullable<string>;
   rangeName?: Nullable<string>;
+  modeName?: Nullable<string>;
 }

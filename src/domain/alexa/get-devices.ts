@@ -122,6 +122,7 @@ export interface Endpoint {
       colorTemperatureInKelvinStateValue: Nullable<number>;
       lockState: Nullable<'LOCKED' | 'UNLOCKED' | 'JAMMED'>;
       thermostatModeValue: Nullable<'HEAT' | 'COOL' | 'AUTO' | 'ECO' | 'OFF'>;
+      modeValue: Nullable<string>;
     }>;
     configuration: Nullable<{
       friendlyName: {
@@ -129,6 +130,16 @@ export interface Endpoint {
           text: string;
         };
       };
+      supportedModes: Nullable<
+        Array<{
+          value: string;
+          friendlyNames: Array<{
+            value: {
+              text: string;
+            };
+          }>;
+        }>
+      >;
     }>;
   }>;
   endpointReports: Nullable<

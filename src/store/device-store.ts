@@ -10,6 +10,8 @@ import {
   ValidStatesByDevice,
 } from '../domain/alexa/get-device-states';
 import {
+  ModeFeatures,
+  ModeFeaturesByDevice,
   RangeFeatures,
   RangeFeaturesByDevice,
 } from '../domain/alexa/save-device-capabilities';
@@ -29,6 +31,7 @@ export default class DeviceStore {
   };
 
   private _deviceCapabilities: RangeFeaturesByDevice = {};
+  private _deviceModeCapabilities: ModeFeaturesByDevice = {};
 
   constructor(performanceSettings?: AlexaPlatformConfig['performance']) {
     const cacheTTL = getOrElseNullable(
@@ -44,6 +47,22 @@ export default class DeviceStore {
 
   set deviceCapabilities(deviceCapabilities: RangeFeaturesByDevice) {
     this._deviceCapabilities = deviceCapabilities;
+  }
+
+  get deviceModeCapabilities(): ModeFeaturesByDevice {
+    return RR.toRecord(this._deviceModeCapabilities);
+  }
+
+  set deviceModeCapabilities(deviceModeCapabilities: ModeFeaturesByDevice) {
+    this._deviceModeCapabilities = deviceModeCapabilities;
+  }
+
+  getModeFeaturesForDevice(deviceId: string): ModeFeatures {
+    return pipe(
+      this.deviceModeCapabilities,
+      RR.lookup(deviceId),
+      O.match(constant({}), identity),
+    );
   }
 
   getRangeFeaturesForDevice(deviceId: string): RangeFeatures {

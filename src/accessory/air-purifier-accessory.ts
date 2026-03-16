@@ -7,10 +7,14 @@ import { flow, identity, pipe } from 'fp-ts/lib/function';
 import { CharacteristicValue, Service } from 'homebridge';
 import { SupportedActionsType } from '../domain/alexa';
 import {
+  AirPurifierFanSpeedModeFeatures,
   AirPurifierFanSpeedRangeFeatures,
   AirPurifierState,
 } from '../domain/alexa/air-purifier';
-import { RangeFeature } from '../domain/alexa/save-device-capabilities';
+import {
+  ModeFeature,
+  RangeFeature,
+} from '../domain/alexa/save-device-capabilities';
 import * as mapper from '../mapper/air-purifier-mapper';
 import BaseAccessory from './base-accessory';
 
@@ -45,6 +49,22 @@ export default class AirPurifierAccessory extends BaseAccessory {
   }
 
   private configureFanSpeed() {
+    const modeAsset = pipe(
+      AirPurifierFanSpeedModeFeatures,
+      RA.findFirstMap((name) => RR.lookup(name)(this.modeFeatures)),
+    );
+    if (O.isSome(modeAsset)) {
+      this.logWithContext(
+        'debug',
+        `Using mode controller for fan speed: ${modeAsset.value.modeName}`,
+      );
+      this.service
+        .getCharacteristic(this.Characteristic.RotationSpeed)
+        .onGet(this.handleModeRotationSpeedGet.bind(this, modeAsset.value))
+        .onSet(this.handleModeRotationSpeedSet.bind(this, modeAsset.value));
+      return;
+    }
+
     pipe(
       AirPurifierFanSpeedRangeFeatures,
       RA.findFirstMap((name) => RR.lookup(name)(this.rangeFeatures)),
@@ -52,7 +72,7 @@ export default class AirPurifierAccessory extends BaseAccessory {
         () =>
           this.logWithContext(
             'debug',
-            'No fan speed range feature found, skipping RotationSpeed',
+            'No fan speed feature found, skipping RotationSpeed',
           ),
         (asset) => {
           this.service
@@ -188,6 +208,71 @@ export default class AirPurifierAccessory extends BaseAccessory {
           this.updateCacheValue({
             value,
             featureName: 'range',
+            instance: asset.instance,
+          });
+        },
+      ),
+    )();
+  }
+
+  async handleModeRotationSpeedGet(asset: ModeFeature): Promise<number> {
+    const determineSpeed = flow(
+      A.findFirst<AirPurifierState>(
+        ({ featureName, instance }) =>
+          featureName === 'mode' && asset.instance === instance,
+      ),
+      O.tap(({ value }) =>
+        O.of(this.logWithContext('debug', `Get mode fan speed result: ${value}`)),
+      ),
+      O.flatMap(({ value }) =>
+        typeof value === 'string'
+          ? O.of(mapper.mapAlexaModeToRotationSpeed(value, asset.supportedModes))
+          : O.none,
+      ),
+    );
+
+    return pipe(
+      this.getStateGraphQl(determineSpeed),
+      TE.match((e) => {
+        this.logWithContext('errorT', 'Get mode fan speed', e);
+        throw this.serviceCommunicationError;
+      }, identity),
+    )();
+  }
+
+  async handleModeRotationSpeedSet(
+    asset: ModeFeature,
+    value: CharacteristicValue,
+  ): Promise<void> {
+    this.logWithContext('debug', `Triggered set mode fan speed: ${value}`);
+    if (typeof value !== 'number') {
+      throw this.invalidValueError;
+    }
+    const modeValue = mapper.mapRotationSpeedToAlexaMode(
+      value,
+      asset.supportedModes,
+    );
+    this.logWithContext(
+      'debug',
+      `Mapped ${value}% to mode: ${modeValue}`,
+    );
+    return pipe(
+      this.platform.alexaApi.setDeviceStateGraphQl(
+        this.device.endpointId,
+        'mode',
+        'setModeValue',
+        { modeValue },
+        asset.instance,
+      ),
+      TE.match(
+        (e) => {
+          this.logWithContext('errorT', 'Set mode fan speed', e);
+          throw this.serviceCommunicationError;
+        },
+        () => {
+          this.updateCacheValue({
+            value: modeValue,
+            featureName: 'mode',
             instance: asset.instance,
           });
         },

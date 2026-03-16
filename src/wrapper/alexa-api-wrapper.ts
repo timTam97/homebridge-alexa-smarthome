@@ -30,7 +30,10 @@ import {
   SmartHomeDevice,
   validateGetDevicesSuccessful,
 } from '../domain/alexa/get-devices';
-import { extractRangeFeatures } from '../domain/alexa/save-device-capabilities';
+import {
+  extractModeFeatures,
+  extractRangeFeatures,
+} from '../domain/alexa/save-device-capabilities';
 import SetDeviceStateResponse, {
   validateSetStateSuccessful,
 } from '../domain/alexa/set-device-state.js';
@@ -95,6 +98,7 @@ export class AlexaApiWrapper {
       TE.map(A.filter(([e]) => excludeHomebridgeAlexaPluginDevices(e))),
       TE.tapIO((devices) => {
         this.deviceStore.deviceCapabilities = extractRangeFeatures(devices);
+        this.deviceStore.deviceModeCapabilities = extractModeFeatures(devices);
         devices.forEach(([e, d]) => {
           this.log.debug(
             `${d.displayName} ::: Raw device features: ${JSON.stringify(

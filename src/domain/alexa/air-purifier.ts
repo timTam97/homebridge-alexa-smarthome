@@ -6,11 +6,15 @@ export interface AirPurifierState {
   value: CapabilityState['value'];
   instance?: CapabilityState['instance'];
   rangeName?: CapabilityState['rangeName'];
+  modeName?: CapabilityState['modeName'];
 }
 
 export const AirPurifierFeatures = {
   power: 'power',
   range: 'range',
+  mode: 'mode',
 } as const;
 
 export const AirPurifierFanSpeedRangeFeatures = ['Fan Speed', 'Fan speed'];
+
+export const AirPurifierFanSpeedModeFeatures = ['Purifier.Mode', 'Purifier'];
