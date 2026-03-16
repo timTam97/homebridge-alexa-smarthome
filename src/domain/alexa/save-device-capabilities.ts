@@ -154,8 +154,7 @@ export const extractModeFeatures = (
                 modeName: _.configuration.friendlyName.value.text,
                 supportedModes: _.configuration.supportedModes.map((m) => ({
                   value: m.value,
-                  friendlyName:
-                    m.friendlyNames?.[0]?.value?.text ?? m.value,
+                  friendlyName: m.friendlyNames?.[0]?.value?.text ?? m.value,
                 })),
               } as ModeFeature),
           )
@@ -192,13 +191,10 @@ export const extractModeFeatures = (
           RR.filterMap(whereValidInfo),
           RR.map(([id, modeFeatures]) => ({
             id,
-            modeFeatures: modeFeatures.reduce(
-              (acc, cur) => {
-                acc[cur.modeName] = cur;
-                return acc;
-              },
-              {} as ModeFeatures,
-            ),
+            modeFeatures: modeFeatures.reduce((acc, cur) => {
+              acc[cur.modeName] = cur;
+              return acc;
+            }, {} as ModeFeatures),
           })),
           RR.filterMap(whereDeviceHasModeControllers),
           RR.reduce(S.Ord)({}, (acc, { id, modeFeatures }) => {

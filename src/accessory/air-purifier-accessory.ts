@@ -222,11 +222,15 @@ export default class AirPurifierAccessory extends BaseAccessory {
           featureName === 'mode' && asset.instance === instance,
       ),
       O.tap(({ value }) =>
-        O.of(this.logWithContext('debug', `Get mode fan speed result: ${value}`)),
+        O.of(
+          this.logWithContext('debug', `Get mode fan speed result: ${value}`),
+        ),
       ),
       O.flatMap(({ value }) =>
         typeof value === 'string'
-          ? O.of(mapper.mapAlexaModeToRotationSpeed(value, asset.supportedModes))
+          ? O.of(
+              mapper.mapAlexaModeToRotationSpeed(value, asset.supportedModes),
+            )
           : O.none,
       ),
     );
@@ -252,10 +256,7 @@ export default class AirPurifierAccessory extends BaseAccessory {
       value,
       asset.supportedModes,
     );
-    this.logWithContext(
-      'debug',
-      `Mapped ${value}% to mode: ${modeValue}`,
-    );
+    this.logWithContext('debug', `Mapped ${value}% to mode: ${modeValue}`);
     return pipe(
       this.platform.alexaApi.setDeviceStateGraphQl(
         this.device.endpointId,
