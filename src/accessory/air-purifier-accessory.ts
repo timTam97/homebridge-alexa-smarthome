@@ -7,7 +7,7 @@ import { flow, identity, pipe } from 'fp-ts/lib/function';
 import { CharacteristicValue, Service } from 'homebridge';
 import { SupportedActionsType } from '../domain/alexa';
 import {
-  AirPurifierFanSpeedModeFeatures,
+  AirPurifierFanSpeedModeInstances,
   AirPurifierFanSpeedRangeFeatures,
   AirPurifierState,
 } from '../domain/alexa/air-purifier';
@@ -50,8 +50,10 @@ export default class AirPurifierAccessory extends BaseAccessory {
 
   private configureFanSpeed() {
     const modeAsset = pipe(
-      AirPurifierFanSpeedModeFeatures,
-      RA.findFirstMap((name) => RR.lookup(name)(this.modeFeatures)),
+      Object.values(this.modeFeatures),
+      A.findFirst((mf) =>
+        AirPurifierFanSpeedModeInstances.includes(mf.instance),
+      ),
     );
     if (O.isSome(modeAsset)) {
       this.logWithContext(

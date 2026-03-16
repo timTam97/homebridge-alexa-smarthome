@@ -15,12 +15,34 @@ export const AirPurifierQuery = `query getPowerRangeStates(
             value
           }
         }
+        ... on Mode {
+          modeValue {
+            value
+          }
+        }
       }
       configuration {
         ... on RangeConfiguration {
           friendlyName {
             value {
               text
+            }
+          }
+        }
+        ... on ModeConfiguration {
+          friendlyName {
+            value {
+              text
+            }
+          }
+          modeOptions {
+            value
+            modeResources {
+              friendlyName {
+                value {
+                  text
+                }
+              }
             }
           }
         }

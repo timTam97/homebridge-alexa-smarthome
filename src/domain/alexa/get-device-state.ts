@@ -150,7 +150,9 @@ export const extractStates = (
             name: 'mode',
             instance: Pattern.string,
             properties: Pattern.array({
-              modeValue: Pattern.string,
+              modeValue: {
+                value: Pattern.string,
+              },
             }),
             configuration: {
               friendlyName: {
@@ -163,7 +165,7 @@ export const extractStates = (
           (_) =>
             O.of({
               ...withCommonProps(_),
-              value: _.properties[0].modeValue,
+              value: _.properties[0].modeValue.value,
               instance: _.instance,
               modeName: _.configuration.friendlyName.value.text,
             } as CapabilityState),

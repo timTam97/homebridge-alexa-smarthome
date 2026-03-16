@@ -74,12 +74,34 @@ export const EndpointsQuery = `query Endpoints {
           ... on ThermostatMode {
             thermostatModeValue
           }
+          ... on Mode {
+            modeValue {
+              value
+            }
+          }
         }
         configuration {
           ... on RangeConfiguration {
             friendlyName {
               value {
                 text
+              }
+            }
+          }
+          ... on ModeConfiguration {
+            friendlyName {
+              value {
+                text
+              }
+            }
+            modeOptions {
+              value
+              modeResources {
+                friendlyName {
+                  value {
+                    text
+                  }
+                }
               }
             }
           }

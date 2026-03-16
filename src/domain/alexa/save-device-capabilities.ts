@@ -133,30 +133,32 @@ export const extractModeFeatures = (
             {
               name: 'mode',
               instance: Pattern.string,
-              properties: Pattern.array({
-                modeValue: Pattern.string,
-              }),
               configuration: {
                 friendlyName: {
                   value: {
                     text: Pattern.string,
                   },
                 },
-                supportedModes: Pattern.array({
+                modeOptions: Pattern.array({
                   value: Pattern.string,
                 }),
               },
             },
-            (_) =>
-              O.of({
-                featureName: _.name,
-                instance: _.instance,
-                modeName: _.configuration.friendlyName.value.text,
-                supportedModes: _.configuration.supportedModes.map((m) => ({
-                  value: m.value,
-                  friendlyName: m.friendlyNames?.[0]?.value?.text ?? m.value,
-                })),
-              } as ModeFeature),
+            (_) => {
+              const opts = _.configuration.modeOptions;
+              return opts.length > 0
+                ? O.of({
+                    featureName: _.name,
+                    instance: _.instance,
+                    modeName: _.configuration.friendlyName.value.text,
+                    supportedModes: opts.map((m) => ({
+                      value: m.value,
+                      friendlyName:
+                        m.modeResources?.friendlyName?.value?.text ?? m.value,
+                    })),
+                  } as ModeFeature)
+                : O.none;
+            },
           )
           .otherwise(constant(O.none)),
       ),

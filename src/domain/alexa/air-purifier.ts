@@ -17,4 +17,4 @@ export const AirPurifierFeatures = {
 
 export const AirPurifierFanSpeedRangeFeatures = ['Fan Speed', 'Fan speed'];
 
-export const AirPurifierFanSpeedModeFeatures = ['Purifier.Mode', 'Purifier'];
+export const AirPurifierFanSpeedModeInstances = ['Purifier.Mode', 'Purifier'];
